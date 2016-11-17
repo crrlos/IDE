@@ -3,6 +3,12 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.FlowLayout;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JTextArea;
 
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
@@ -19,7 +25,7 @@ import org.fife.ui.rtextarea.RTextScrollPane;
  * @author Carlos Lobos
  */
 public class Main extends javax.swing.JFrame {
-    
+
     RSyntaxTextArea areaC;
     RSyntaxTextArea areaJ;
 
@@ -28,10 +34,10 @@ public class Main extends javax.swing.JFrame {
      */
     public Main() {
         initComponents();
-        
-        areaC = new RSyntaxTextArea(40,60);
+
+        areaC = new RSyntaxTextArea(40, 60);
         areaJ = new RSyntaxTextArea(40, 60);
-        
+
         areaC.setSyntaxEditingStyle(RSyntaxTextArea.SYNTAX_STYLE_C);
         areaC.setCaretColor(Color.BLUE);
         areaC.setHighlightCurrentLine(false);
@@ -40,17 +46,17 @@ public class Main extends javax.swing.JFrame {
         jPanel1.add(pane);
         FlowLayout fl = new FlowLayout(FlowLayout.CENTER, 0, 0);
         jPanel1.setLayout(fl);
-        
+
         areaJ = new RSyntaxTextArea(40, 60);
         areaJ.setSyntaxEditingStyle(RSyntaxTextArea.SYNTAX_STYLE_JAVA);
         pane = new RTextScrollPane(areaJ);
         jPanel2.add(pane);
         fl = new FlowLayout(FlowLayout.CENTER, 0, 0);
         jPanel2.setLayout(fl);
-        
+
         this.pack();
         setLocationRelativeTo(null);
-        
+
     }
 
     /**
@@ -167,7 +173,18 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_jPanel1KeyReleased
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
-        areaJ.setText(areaC.getText());
+        try {
+            File f = new File("C:\\Users\\Carlos Lobos\\Desktop\\trap\\in.c");
+            FileWriter fw = new FileWriter(f);
+            fw.write(areaC.getText());
+            fw.close();
+            Runtime.getRuntime().exec("\"C:\\Program Files\\Tangible Software Solutions\\Free Edition CPlusPlus to Java Converter\\Free Edition C++ to Java Converter.exe\" "
+                    + "C:\\Users\\Carlos Lobos\\Desktop\\trap\\in.c C:\\Users\\Carlos Lobos\\Desktop\\trap\\out.java");
+            
+
+        } catch (IOException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
     /**
@@ -203,7 +220,7 @@ public class Main extends javax.swing.JFrame {
                 new Main().setVisible(true);
             }
         });
-        
+
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
