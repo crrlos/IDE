@@ -231,6 +231,8 @@ public class Main extends javax.swing.JFrame {
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
        
         final JFileChooser fc = new JFileChooser();
+        File directory = new File("C:\\Users\\Carlos Lobos\\Desktop\\ejemplos");
+        fc.setCurrentDirectory(directory);
         int returnVal = fc.showOpenDialog(this);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File file = fc.getSelectedFile();
