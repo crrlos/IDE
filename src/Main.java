@@ -256,6 +256,7 @@ public class Main extends javax.swing.JFrame {
         try {
             terminado = false;
             out.writeUTF(areaC.getText());
+            areaJ.setText("");
             t = new Tiempo(this);
             t.start();
             areaJ.setText(new Formatter().formatSource(in.readUTF()));
