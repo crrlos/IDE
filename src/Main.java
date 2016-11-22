@@ -1,22 +1,22 @@
 
 import com.google.googlejavaformat.java.Formatter;
 import com.google.googlejavaformat.java.FormatterException;
-import java.awt.BorderLayout;
+
 import java.awt.Color;
-import java.awt.Dialog;
+
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.io.DataInputStream;
-import java.io.DataOutput;
+
 import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileWriter;
+
 import java.io.IOException;
-import java.io.OutputStreamWriter;
+
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JTextArea;
+
 
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 
@@ -32,6 +32,34 @@ import org.fife.ui.rtextarea.RTextScrollPane;
  * @author Carlos Lobos
  */
 public class Main extends javax.swing.JFrame {
+    class Tiempo extends Thread{
+            Main m;
+
+        public Tiempo(Main m) {
+            this.m = m;
+        }
+            
+        @Override
+        public void run() {
+            super.run(); 
+            try {
+                Thread.sleep(3000);
+                if(!terminado){
+                   s.close();
+                   s = new Socket("localhost",50000);
+                   in = new DataInputStream(s.getInputStream());
+                   out = new DataOutputStream(s.getOutputStream());
+                   areaJ.setText("error de compilador");
+                }
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            }   catch (IOException ex) {
+                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                }
+        }
+    
+    
+    }
 
     RSyntaxTextArea areaC;
     RSyntaxTextArea areaJ;
@@ -39,13 +67,15 @@ public class Main extends javax.swing.JFrame {
     DataOutputStream out;
     Socket s;
     int a;
-
+    boolean terminado;
+    Tiempo t;
     /**
      * Creates new form Main
      */
     public Main() {
         initComponents();
         try {
+            
             s = new Socket("localhost", 50000);
             in = new DataInputStream(s.getInputStream());
             out = new DataOutputStream(s.getOutputStream());
@@ -200,15 +230,19 @@ public class Main extends javax.swing.JFrame {
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
         try {
-           
+            terminado = false;
             out.writeUTF(areaC.getText());
+            t = new Tiempo(this);
+            t.start();
             areaJ.setText(new Formatter().formatSource(in.readUTF()));
+            terminado = true;
         } catch (IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         } catch (FormatterException ex) {
             try {
                 out.writeUTF(areaC.getText());
                 areaJ.setText(in.readUTF());
+                terminado = true;
             } catch (IOException ex1) {
                 Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex1);
             }
