@@ -9,14 +9,17 @@ import java.awt.Font;
 import java.io.DataInputStream;
 
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
 
 import java.io.IOException;
 
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
+import javax.swing.JFileChooser;
 
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 
@@ -32,33 +35,34 @@ import org.fife.ui.rtextarea.RTextScrollPane;
  * @author Carlos Lobos
  */
 public class Main extends javax.swing.JFrame {
-    class Tiempo extends Thread{
-            Main m;
+
+    class Tiempo extends Thread {
+
+        Main m;
 
         public Tiempo(Main m) {
             this.m = m;
         }
-            
+
         @Override
         public void run() {
-            super.run(); 
+            super.run();
             try {
                 Thread.sleep(3000);
-                if(!terminado){
-                   s.close();
-                   s = new Socket("localhost",50000);
-                   in = new DataInputStream(s.getInputStream());
-                   out = new DataOutputStream(s.getOutputStream());
-                   areaJ.setText("error de compilador");
+                if (!terminado) {
+                    s.close();
+                    s = new Socket("localhost", 50000);
+                    in = new DataInputStream(s.getInputStream());
+                    out = new DataOutputStream(s.getOutputStream());
+                    areaJ.setText("error de compilador");
                 }
             } catch (InterruptedException ex) {
                 Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-            }   catch (IOException ex) {
-                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-                }
+            } catch (IOException ex) {
+                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
-    
-    
+
     }
 
     RSyntaxTextArea areaC;
@@ -69,13 +73,14 @@ public class Main extends javax.swing.JFrame {
     int a;
     boolean terminado;
     Tiempo t;
+
     /**
      * Creates new form Main
      */
     public Main() {
         initComponents();
         try {
-            
+
             s = new Socket("localhost", 50000);
             in = new DataInputStream(s.getInputStream());
             out = new DataOutputStream(s.getOutputStream());
@@ -85,25 +90,24 @@ public class Main extends javax.swing.JFrame {
 
         areaC = new RSyntaxTextArea(25, 40);
         areaJ = new RSyntaxTextArea(25, 40);
-        
+
         Font font = areaC.getFont();
         areaC.setFont(font.deriveFont(20f));
-        
+
         Font font2 = areaJ.getFont();
         areaJ.setFont(font2.deriveFont(20f));
-        
+
         areaC.setSyntaxEditingStyle(RSyntaxTextArea.SYNTAX_STYLE_C);
         areaC.setCaretColor(Color.BLUE);
         areaC.setHighlightCurrentLine(false);
         areaC.setAutoIndentEnabled(true);
-        
+
         RTextScrollPane pane = new RTextScrollPane(areaC);
         jPanel1.add(pane);
-        
+
         FlowLayout fl = new FlowLayout(FlowLayout.CENTER, 0, 0);
         jPanel1.setLayout(fl);
 
-       
         areaJ.setSyntaxEditingStyle(RSyntaxTextArea.SYNTAX_STYLE_JAVA);
         pane = new RTextScrollPane(areaJ);
         jPanel2.add(pane);
@@ -139,7 +143,6 @@ public class Main extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
-        setSize(new java.awt.Dimension(20, 500));
 
         jPanel1.setBackground(new java.awt.Color(102, 102, 102));
         jPanel1.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -174,7 +177,13 @@ public class Main extends javax.swing.JFrame {
 
         jMenu1.setText("File");
 
+        jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItem1.setText("open");
+        jMenuItem1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jMenuItem1MouseClicked(evt);
+            }
+        });
         jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem1ActionPerformed(evt);
@@ -220,7 +229,22 @@ public class Main extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-        // TODO add your handling code here:
+       
+        final JFileChooser fc = new JFileChooser();
+        int returnVal = fc.showOpenDialog(this);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File file = fc.getSelectedFile();
+            try {
+                //This is where a real application would open the file.
+                Scanner s = new Scanner(file);
+                areaC.setText("");
+                while(s.hasNext()){
+                    areaC.setText(areaC.getText()+s.nextLine()+"\n");
+                }
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } 
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void jPanel1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jPanel1KeyReleased
@@ -250,6 +274,11 @@ public class Main extends javax.swing.JFrame {
         }
 
     }//GEN-LAST:event_jMenuItem2ActionPerformed
+
+    private void jMenuItem1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuItem1MouseClicked
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_jMenuItem1MouseClicked
 
     /**
      * @param args the command line arguments
