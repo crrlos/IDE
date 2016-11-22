@@ -1,12 +1,19 @@
 
+import com.google.googlejavaformat.java.Formatter;
+import com.google.googlejavaformat.java.FormatterException;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.FlowLayout;
+import java.awt.Font;
+import java.io.DataInputStream;
+import java.io.DataOutput;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JTextArea;
@@ -28,26 +35,45 @@ public class Main extends javax.swing.JFrame {
 
     RSyntaxTextArea areaC;
     RSyntaxTextArea areaJ;
+    DataInputStream in;
+    DataOutputStream out;
+    Socket s;
+    int a;
 
     /**
      * Creates new form Main
      */
     public Main() {
         initComponents();
+        try {
+            s = new Socket("localhost", 50000);
+            in = new DataInputStream(s.getInputStream());
+            out = new DataOutputStream(s.getOutputStream());
+        } catch (IOException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
-        areaC = new RSyntaxTextArea(40, 60);
-        areaJ = new RSyntaxTextArea(40, 60);
-
+        areaC = new RSyntaxTextArea(25, 40);
+        areaJ = new RSyntaxTextArea(25, 40);
+        
+        Font font = areaC.getFont();
+        areaC.setFont(font.deriveFont(20f));
+        
+        Font font2 = areaJ.getFont();
+        areaJ.setFont(font2.deriveFont(20f));
+        
         areaC.setSyntaxEditingStyle(RSyntaxTextArea.SYNTAX_STYLE_C);
         areaC.setCaretColor(Color.BLUE);
         areaC.setHighlightCurrentLine(false);
         areaC.setAutoIndentEnabled(true);
+        
         RTextScrollPane pane = new RTextScrollPane(areaC);
         jPanel1.add(pane);
+        
         FlowLayout fl = new FlowLayout(FlowLayout.CENTER, 0, 0);
         jPanel1.setLayout(fl);
 
-        areaJ = new RSyntaxTextArea(40, 60);
+       
         areaJ.setSyntaxEditingStyle(RSyntaxTextArea.SYNTAX_STYLE_JAVA);
         pane = new RTextScrollPane(areaJ);
         jPanel2.add(pane);
@@ -174,17 +200,21 @@ public class Main extends javax.swing.JFrame {
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
         try {
-            File f = new File("C:\\Users\\Carlos Lobos\\Desktop\\trap\\in.c");
-            FileWriter fw = new FileWriter(f);
-            fw.write(areaC.getText());
-            fw.close();
-            Runtime.getRuntime().exec("\"C:\\Program Files\\Tangible Software Solutions\\Free Edition CPlusPlus to Java Converter\\Free Edition C++ to Java Converter.exe\" "
-                    + "C:\\Users\\Carlos Lobos\\Desktop\\trap\\in.c C:\\Users\\Carlos Lobos\\Desktop\\trap\\out.java");
-            
-
+           
+            out.writeUTF(areaC.getText());
+            areaJ.setText(new Formatter().formatSource(in.readUTF()));
         } catch (IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (FormatterException ex) {
+            try {
+                out.writeUTF(areaC.getText());
+                areaJ.setText(in.readUTF());
+            } catch (IOException ex1) {
+                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex1);
+            }
+
         }
+
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
     /**
