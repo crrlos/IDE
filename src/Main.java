@@ -269,7 +269,9 @@ public class Main extends javax.swing.JFrame {
         } catch (FormatterException ex) {
             try {
                 out.writeUTF(areaC.getText());
-                areaJ.setText(in.readUTF());
+                String s = in.readUTF();
+                
+                areaJ.setText(s.substring(s.indexOf("el")));
                 terminado = true;
             } catch (IOException ex1) {
                 Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex1);
