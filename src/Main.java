@@ -88,8 +88,8 @@ public class Main extends javax.swing.JFrame {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        areaC = new RSyntaxTextArea(25, 40);
-        areaJ = new RSyntaxTextArea(25, 40);
+        areaC = new RSyntaxTextArea(25, 45);
+        areaJ = new RSyntaxTextArea(25, 45);
 
         Font font = areaC.getFont();
         areaC.setFont(font.deriveFont(20f));
@@ -229,7 +229,7 @@ public class Main extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-       
+
         final JFileChooser fc = new JFileChooser();
         File directory = new File("C:\\Users\\Carlos Lobos\\Desktop\\ejemplos");
         fc.setCurrentDirectory(directory);
@@ -240,13 +240,14 @@ public class Main extends javax.swing.JFrame {
                 //This is where a real application would open the file.
                 Scanner s = new Scanner(file);
                 areaC.setText("");
-                while(s.hasNext()){
-                    areaC.setText(areaC.getText()+s.nextLine()+"\n");
+                areaJ.setText("");
+                while (s.hasNext()) {
+                    areaC.setText(areaC.getText() + s.nextLine() + "\n");
                 }
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } 
+        }
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void jPanel1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jPanel1KeyReleased
